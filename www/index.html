@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>My TITLE!</title>
+    <script src="cordova.js"></script>
+	<script src="js/main.js"></script>
+    <style>
+
+		body {
+           margin: 0px 0px 1px 0px;
+		    padding: 0px;
+		    background: #000;
+		    overflow: hidden;
+        }
+    </style>
+	<meta name="viewport"
+		content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+</head>
+<body>
+<div id="content"></div>
+<script type="text/javascript">
+ 	Template.isCordovaApp = (typeof window.cordova !== "undefined");
+ 
+	if(Template.isCordovaApp) {
+    	document.addEventListener("deviceready", startUp, false);
+    } else {
+    	startUp();
+    }
+	function startUp() {
+		var screenDims = Utils.ScreenUtils.calculateScreenMetrics(480, 800, 0);
+		//	100% of the browser window - see Boot.js for additional configuration
+		var SAFE_ZONE_WIDTH = 480;// * window.devicePixelRatio;
+		var SAFE_ZONE_HEIGHT = 800;// * window.devicePixelRatio;
+		var game = new Phaser.Game(screenDims.gameWidth, screenDims.gameHeight, Phaser.AUTO, 'content');
+
+		//	Add the States your game has.
+		game.state.add('Boot', Template.Boot);
+		game.state.add('Preloader', Template.Preloader);
+		game.state.add('MainMenu', Template.MainMenu);
+		game.state.add('Game', Template.Game);
+
+		//	Now start the Boot state.
+		game.state.start('Boot');
+	}
+
+</script>
+
+</body>
+</html>

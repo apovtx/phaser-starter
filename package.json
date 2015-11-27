@@ -1,0 +1,26 @@
+{
+  "name": "phaser-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "phaser-framework",
+    "phaser.io",
+    "game"
+  ],
+  "author": "Apostolos Voulkidis",
+  "license": "CC-BY-4.0",
+  "devDependencies": {
+    "connect-livereload": "^0.5.4",
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.7.0",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-connect": "^0.11.2",
+    "grunt-contrib-copy": "^0.8.2",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-open": "^0.2.3"
+  }
+}
