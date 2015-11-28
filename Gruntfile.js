@@ -68,7 +68,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-open');
 
-  grunt.registerTask('default', ['clean', 'concat', 'copy', 'connect:client', 'watch:client', 'open']);
+  grunt.registerTask('default', ['clean', 'concat', 'copy', 'connect:client', 'watch:client', 'open:server']);
   grunt.registerTask('refresh', ['clean', 'concat', 'copy']);
 
   // Register our own custom task alias.

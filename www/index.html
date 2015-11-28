@@ -28,11 +28,10 @@
     	startUp();
     }
 	function startUp() {
-		var screenDims = Utils.ScreenUtils.calculateScreenMetrics(480, 800, 0);
+		//var screenDims = Utils.ScreenUtils.calculateScreenMetrics(480, 800, 0);
+		//console.log(screenDims);
 		//	100% of the browser window - see Boot.js for additional configuration
-		var SAFE_ZONE_WIDTH = 480;// * window.devicePixelRatio;
-		var SAFE_ZONE_HEIGHT = 800;// * window.devicePixelRatio;
-		var game = new Phaser.Game(screenDims.gameWidth, screenDims.gameHeight, Phaser.AUTO, 'content');
+		var game = new Phaser.Game(480, 800, Phaser.AUTO, 'content');
 
 		//	Add the States your game has.
 		game.state.add('Boot', Template.Boot);

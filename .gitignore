@@ -2,6 +2,7 @@
 bin/*
 node_modules/*
 obj/*
+www/*
 *.csproj
 *.csproj.user
 *.sln

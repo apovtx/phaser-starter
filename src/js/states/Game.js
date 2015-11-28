@@ -6,7 +6,8 @@ var text;
 Template.Game.prototype = {
     create: function() {
         this.game.input.onDown.add(this.onTap, this);
-        this.game.input.onUp.add(this.draw, this);
+        var logo = this.game.add.image(this.world.width/2, this.world.height/2, 'logo');
+        logo.anchor.set(0.5, 0.5);
     },
 
     onTap: function(){

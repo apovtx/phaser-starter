@@ -96135,32 +96135,31 @@ Template.Boot.prototype = {
     init: function () {
         this.input.maxPointers = 1;
         this.stage.disableVisibilityChange = false;
-        Template.screenDims = Utils.ScreenUtils.screenMetrics;
-        
+        //Template.screenDims = Utils.ScreenUtils.screenMetrics;
+        //console.log(Template.screenDims)
         if (false && this.game.device.desktop) {
             console.log("DESKTOP");
-            this.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-            this.scale.setUserScale(Template.screenDims.scaleX, Template.screenDims.scaleY);
+            this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            //this.scale.setUserScale(Template.screenDims.scaleX, Template.screenDims.scaleY);
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
         }
         else {
             console.log("MOBILE");
-            this.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-            this.scale.setUserScale(Template.screenDims.scaleX, Template.screenDims.scaleY);
-            this.scale.pageAlignHorizontally = true;
-            this.scale.pageAlignVertically = true;
-            this.scale.forceOrientation(false,true);
+            //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            //this.scale.setUserScale(Template.screenDims.scaleX, Template.screenDims.scaleY);
+            //this.scale.pageAlignHorizontally = true;
+            //this.scale.pageAlignVertically = true;
+            //this.scale.forceOrientation(false,true);
         }
     },
 
     preload: function () {
         this.game.stage.backgroundColor = '#000000';
-        this.load.image('logo', 'asset/images/Logo.jpg');
+        this.load.image('logo', 'assets/images/logo.png');
     },
 
     create: function () {
-      //  this.game.add.plugin(Phaser.Plugin.Debug);
         this.state.start('Preloader');
     }
 
@@ -96173,166 +96172,19 @@ Template.Game = function(game) {
 var text;
 Template.Game.prototype = {
     create: function() {
-        this.game.physics.startSystem(Phaser.Physics.P2JS);
-        this.game.physics.p2.setImpactEvents(true);
-        this.game.physics.p2.gravity.y = 900;
-        this.game.physics.p2.friction = 0;        
-
-        //camera
-        this.cameraYMin = 9999;
-        this.platformYMin = 99999;
-
-        var playerMaterial = this.game.physics.p2.createMaterial('spriteMaterial');
-        this.worldMaterial = this.game.physics.p2.createMaterial('worldMaterial');
-
-        this.game.physics.p2.setWorldMaterial(this.worldMaterial, true, true, false, false);
-        this.gemsCG = this.game.physics.p2.createCollisionGroup();
-
-        this.heroCreate();
-        this.hero.body.setMaterial(playerMaterial);
-
-        var wallsCollision = this.game.physics.p2.createContactMaterial(playerMaterial, this.worldMaterial);  
-        wallsCollision.restitution = 1;
-        wallsCollision.stiffness = 1e17;
-     
-     
-        //walls
-        var walls = this.game.add.sprite(0,this.game.world.centerY);
-        this.game.physics.p2.enableBody(walls, true);
-        walls.body.static=true
-        walls.body.clearShapes();
-        walls.body.addRectangle(this.game.width, 100, this.game.width/2, this.game.height/2-10);
-        walls.body.setMaterial(this.worldMaterial);
-        this.game.physics.p2.updateBoundsCollisionGroup();
-
-
-        this.platform = this.game.add.sprite(100,100);
-        this.game.physics.p2.enableBody(this.platform, true);
-        this.platform.body.static = true;
-        this.platform.body.clearShapes();
-        this.platform.name = 'platform';
-       
-        this.graphics = this.game.add.graphics(0, 0);
-        this.game.input.onDown.add(this.reload, this);
-        this.game.input.onUp.add(this.draw, this);
-
-        this.cursor = this.input.keyboard.createCursorKeys();
-        this.gems = this.game.add.group();
-        this.gems.enableBody = true;
-        this.gems.physicsBodyType = Phaser.Physics.P2JS;
-        this.generateGems();
+        this.game.input.onDown.add(this.onTap, this);
+        var logo = this.game.add.image(this.world.width/2, this.world.height/2, 'logo');
+        logo.anchor.set(0.5, 0.5);
     },
 
     onTap: function(){
-        if( this.cursor.up.isDown ) {
-            this.hero.body.velocity.y = -350;
-        } 
-
-        // track the maximum amount that the hero has travelled
-        this.hero.yChange = Math.max( this.hero.yChange, Math.abs( this.hero.y - this.hero.yOrig ) );
-        
-        // if the hero falls below the camera view, gameover
-        //if( this.hero.y > this.cameraYMin + this.game.height && this.hero.alive ) {
-         // this.state.start( 'Play' );
-        //}
-    },
-
-    checkOverlap: function(body1, body2, arg3, arg4 , arg5) {
-        console.log(body1, body2, arg3, arg4 , arg5)
-        if(body1 === null){
-            return;
-        }
-        if(body1.sprite.name === 'gem'){
-            body1.sprite.destroy();
-            console.log("collected");
-            return;
-        }
-
-    },
-
-    heroCreate: function() {
-        this.hero = this.game.add.sprite(this.world.centerX, 500, 'items');
-        this.hero.frameName="alienBlue_badge1.png";
-        this.game.physics.p2.enable(this.hero,true);
-        // track where the hero started and how much the distance has changed from that point
-        this.hero.yOrig = this.hero.y;
-        this.hero.yChange = 0;
-        this.hero.body.clearShapes();
-        this.hero.body.addCircle(25);
-        this.hero.body.setZeroDamping();
-        this.hero.body.setZeroForce();
-        this.hero.body.setZeroVelocity();
-        this.hero.body.onBeginContact.add(this.checkOverlap, this);
-        this.hero.name = 'player';
-    },
-    
-    reload: function(pointer) {
-        this.startPoint = {x: pointer.position.x, y: pointer.position.y+ this.camera.y};
-    },
-
-    draw: function(pointer) {
-        var endPoint = pointer.position;
-        var line = new Phaser.Line(this.startPoint.x, this.startPoint.y, endPoint.x, endPoint.y+this.camera.y);
-        this.resetPlatform();
-        this.graphics.beginFill(0xFF3300);
-        this.graphics.lineStyle(10, 0xffd900, 1);
-        this.graphics.moveTo(this.startPoint.x, this.startPoint.y);
-        this.graphics.lineTo(endPoint.x, endPoint.y+this.camera.y);
-        this.graphics.endFill();
-        this.platform.revive();
-        this.platform.loadTexture(this.graphics.generateTexture());
-        this.platform.body.x = line.midPoint().x;
-        this.platform.body.y = line.midPoint().y;
-        this.platform.body.addRectangle(line.length, 30, 0 , 13, line.angle);
-        this.platform.body.setMaterial(this.worldMaterial);
-        this.game.debug.geom(line, '#ffffff');
-    },
-
-    resetPlatform: function(){
-        this.graphics.clear();
-        this.platform.kill();
-        this.platform.body.clearShapes();
-    },
-
-    generateGems: function(){
-        //minx
-        for(var i=0;i<10;i++){
-            var gem = this.gems.create(this.game.world.randomX,this.game.world.randomY, 'items');
-            gem.frameName = 'gemRed.png';
-            gem.body.clearShapes();
-            gem.body.debug = true;
-            gem.body.loadPolygon('physicsData', 'gemRed');
-            gem.body.static=true;
-            gem.body.data.shapes[0].sensor = true;
-            gem.name = "gem";
-        }
     },
 
     update: function() {
-        this.world.setBounds( 0, -this.hero.yChange, this.world.width, this.game.height + this.hero.yChange );
-        this.onTap();
-        // the built in camera follow methods won't work for our needs
-        // this is a custom follow style that will not ever move down, it only moves up
-        this.cameraYMin = Math.min( this.cameraYMin, this.hero.y -250 );
-        this.camera.y = this.cameraYMin;
     },
 
-    randBetween: function(min,max){
-      return  Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-
-    quitGame: function(pointer) {
+    quitGame: function() {
         this.state.start('MainMenu');
-    },
-
-    updateTimer: function(){
-
-    },
-
-    playSound: function(id){
-        if(Template.isCordovaApp && window.plugins && window.plugins.NativeAudio){
-            window.plugins.NativeAudio.play( id );
-        }
     },
 
     render: function() {
@@ -96363,41 +96215,24 @@ Template.MainMenu.prototype = {
 
     render: function() {
         this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");      
-    },
-    
-    tweenButtons: function(button) {
-        var randomInt = this.randBetween(5, 10);
-        this.game.add.tween(button).to({y: button.y + randomInt}, 2000, Phaser.Easing.Linear.None, true, 0, -1, true);  
-    },
-
-    randBetween: function(min,max){
-        return  Math.floor(Math.random() * (max - min + 1)) + min;
     }
+
 };
 
-Template.Preloader = function(game) {
-    this.ready = false;
+Template.Preloader = function() {
+
 };
 
 Template.Preloader.prototype = {
 
     preload: function() {
-        this.game.load.image("maria", "asset/images/maria.png");
-        this.game.load.image("clouds", "asset/images/sky3.jpg");
-        //this.game.load.image("rope", "asset/images/rope.png");
-        //this.game.load.spritesheet("chain", "asset/images/chain.png",16, 26);
-        this.game.load.atlasJSONHash('items', 'asset/images/items.png', 'asset/images/items.json');
-        this.game.load.physics('physicsData', 'asset/images/polygon.json');
-        if( window.plugins && window.plugins.NativeAudio && Template.isCordovaApp) {
-            //music
-        }
 
     },
 
     create: function() {
         this.game.stage.backgroundColor = '#1589FF';
         this.game.time.advancedTiming = true;
-        var logo = this.add.sprite(this.world.width/2, this.world.height/2, 'logo');
+        var logo = this.game.add.sprite(this.world.width/2, this.world.height/2, 'logo');
         logo.anchor.set(0.5, 0.5);
 
         this.game.time.events.add(Phaser.Timer.SECOND * 2.0, function() {
@@ -96416,12 +96251,4 @@ Template.Preloader.prototype = {
     startGame: function() {
         this.state.start('MainMenu');
     },
-
-    loadAudio: function(id, path){
-        window.plugins.NativeAudio.preloadSimple( id, path, function(msg){        
-        }, function(msg){
-            console.log( 'error: ' + msg );
-        });
-    }
-
 };

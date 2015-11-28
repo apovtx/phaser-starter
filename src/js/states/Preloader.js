@@ -11,7 +11,7 @@ Template.Preloader.prototype = {
     create: function() {
         this.game.stage.backgroundColor = '#1589FF';
         this.game.time.advancedTiming = true;
-        var logo = this.add.sprite(this.world.width/2, this.world.height/2, 'logo');
+        var logo = this.game.add.sprite(this.world.width/2, this.world.height/2, 'logo');
         logo.anchor.set(0.5, 0.5);
 
         this.game.time.events.add(Phaser.Timer.SECOND * 2.0, function() {
